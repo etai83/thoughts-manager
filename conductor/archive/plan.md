@@ -25,9 +25,9 @@ This plan outlines the steps to build the foundational graph canvas.
 - [x] Task: Implement Feature: Automatically sync Zustand state to Dexie.js on changes.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Linking & Persistence' (Protocol in workflow.md)
 
-## Phase 4: Content Editing & Layout
+## Phase 4: Content Editing & Layout [checkpoint: f623281]
 - [x] Task: Write Tests: Inline markdown editor component.
 - [x] Task: Implement Feature: Integrated markdown editor within nodes.
 - [x] Task: Write Tests: Auto-layout trigger.
 - [x] Task: Implement Feature: Simple force-directed layout for nodes.
-- [~] Task: Conductor - User Manual Verification 'Phase 4: Content Editing & Layout' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Content Editing & Layout' (Protocol in workflow.md)
