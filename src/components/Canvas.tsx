@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -18,7 +18,12 @@ const Canvas: React.FC = () => {
     onEdgesChange,
     onConnect,
     addNode,
+    loadData,
   } = useStore();
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleAddNode = () => {
     const id = Date.now().toString();

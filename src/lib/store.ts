@@ -20,6 +20,7 @@ export type AppState = {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   addNode: (node: Node) => void;
+  loadData: () => Promise<void>;
 };
 
 export const useStore = create<AppState>((set, get) => ({
@@ -75,6 +76,14 @@ export const useStore = create<AppState>((set, get) => ({
       type: node.type || 'default',
       position: node.position,
       data: node.data as { label: string; content?: string },
+    });
+  },
+  loadData: async () => {
+    const nodes = await db.nodes.toArray();
+    const edges = await db.edges.toArray();
+    set({ 
+      nodes: nodes.map(n => ({ ...n, data: { ...n.data } })), 
+      edges 
     });
   },
 }));
