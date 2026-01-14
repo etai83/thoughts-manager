@@ -9,6 +9,12 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useStore } from '@/lib/store';
+import ThoughtNode from './ThoughtNode';
+import { runLayout } from '@/lib/layout';
+
+const nodeTypes = {
+  thought: ThoughtNode,
+};
 
 const Canvas: React.FC = () => {
   const {
@@ -18,6 +24,7 @@ const Canvas: React.FC = () => {
     onEdgesChange,
     onConnect,
     addNode,
+    setNodes,
     loadData,
   } = useStore();
 
@@ -30,10 +37,15 @@ const Canvas: React.FC = () => {
     const newNode = {
       id,
       position: { x: Math.random() * 400, y: Math.random() * 400 },
-      data: { label: `New Thought ${id}` },
-      type: 'default',
+      data: { label: `Thought ${id}`, content: '' },
+      type: 'thought',
     };
     addNode(newNode);
+  };
+
+  const handleLayout = () => {
+    const layoutedNodes = runLayout(nodes, edges);
+    setNodes(layoutedNodes);
   };
 
   return (
@@ -44,6 +56,7 @@ const Canvas: React.FC = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         fitView
       >
         <Background />
@@ -55,6 +68,12 @@ const Canvas: React.FC = () => {
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
             >
               Add Thought
+            </button>
+            <button
+              onClick={handleLayout}
+              className="bg-stone-500 text-white px-4 py-2 rounded hover:bg-stone-600 transition-colors"
+            >
+              Auto Layout
             </button>
           </div>
         </Panel>

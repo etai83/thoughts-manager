@@ -18,16 +18,16 @@ This plan outlines the steps to build the foundational graph canvas.
 - [x] Task: Implement Feature: Ability to remove nodes.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Core Canvas & Node Management' (Protocol in workflow.md)
 
-## Phase 3: Linking & Persistence
+## Phase 3: Linking & Persistence [checkpoint: ad7d07d]
 - [x] Task: Write Tests: Edge creation and deletion.
 - [x] Task: Implement Feature: Linking nodes together via handles.
 - [x] Task: Write Tests: Dexie.js persistence sync.
 - [x] Task: Implement Feature: Automatically sync Zustand state to Dexie.js on changes.
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Linking & Persistence' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Linking & Persistence' (Protocol in workflow.md)
 
 ## Phase 4: Content Editing & Layout
-- [ ] Task: Write Tests: Inline markdown editor component.
-- [ ] Task: Implement Feature: Integrated markdown editor within nodes.
-- [ ] Task: Write Tests: Auto-layout trigger.
-- [ ] Task: Implement Feature: Simple force-directed layout for nodes.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Content Editing & Layout' (Protocol in workflow.md)
+- [x] Task: Write Tests: Inline markdown editor component.
+- [x] Task: Implement Feature: Integrated markdown editor within nodes.
+- [x] Task: Write Tests: Auto-layout trigger.
+- [x] Task: Implement Feature: Simple force-directed layout for nodes.
+- [~] Task: Conductor - User Manual Verification 'Phase 4: Content Editing & Layout' (Protocol in workflow.md)

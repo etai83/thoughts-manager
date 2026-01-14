@@ -81,6 +81,7 @@
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {
       --tw-border-style: solid;
+      --tw-font-weight: initial;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;
       --tw-shadow-alpha: 100%;
@@ -103,10 +104,19 @@
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --color-teal-500: #00baa7;
     --color-blue-500: #3080ff;
     --color-blue-600: #155dfc;
+    --color-stone-400: #a6a09b;
+    --color-stone-500: #79716b;
+    --color-stone-600: #57534d;
+    --color-black: #000;
     --color-white: #fff;
     --spacing: .25rem;
+    --text-xs: .75rem;
+    --text-xs--line-height: calc(1 / .75);
+    --font-weight-bold: 700;
+    --radius-md: .375rem;
     --default-transition-duration: .15s;
     --default-transition-timing-function: cubic-bezier(.4, 0, .2, 1);
     --default-font-family: var(--font-sans);
@@ -115,8 +125,12 @@
 
   @supports (color: lab(0% 0 0)) {
     :root, :host {
+      --color-teal-500: lab(67.3859% -49.0983 -2.63511);
       --color-blue-500: lab(54.1736% 13.3369 -74.6839);
       --color-blue-600: lab(44.0605% 29.0279 -86.0352);
+      --color-stone-400: lab(66.2166% 1.88044 3.20326);
+      --color-stone-500: lab(48.1164% 2.35701 4.26852);
+      --color-stone-600: lab(35.5168% 1.08604 4.07829);
     }
   }
 }
@@ -380,6 +394,10 @@
 @layer components;
 
 @layer utilities {
+  .fixed {
+    position: fixed;
+  }
+
   .static {
     position: static;
   }
@@ -418,12 +436,32 @@
     }
   }
 
+  .mb-2 {
+    margin-bottom: calc(var(--spacing) * 2);
+  }
+
   .flex {
     display: flex;
   }
 
+  .min-h-\[100px\] {
+    min-height: 100px;
+  }
+
   .min-h-screen {
     min-height: 100vh;
+  }
+
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+
+  .max-w-none {
+    max-width: none;
+  }
+
+  .min-w-\[150px\] {
+    min-width: 150px;
   }
 
   .flex-col {
@@ -446,17 +484,47 @@
     border-radius: .25rem;
   }
 
+  .rounded-md {
+    border-radius: var(--radius-md);
+  }
+
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
+
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+
+  .border-stone-400 {
+    border-color: var(--color-stone-400);
+  }
+
+  .\!bg-teal-500 {
+    background-color: var(--color-teal-500) !important;
   }
 
   .bg-blue-500 {
     background-color: var(--color-blue-500);
   }
 
+  .bg-stone-500 {
+    background-color: var(--color-stone-500);
+  }
+
   .bg-white {
     background-color: var(--color-white);
+  }
+
+  .p-1 {
+    padding: calc(var(--spacing) * 1);
   }
 
   .p-2 {
@@ -469,6 +537,20 @@
 
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
+  }
+
+  .text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .text-black {
+    color: var(--color-black);
   }
 
   .text-white {
@@ -484,6 +566,11 @@
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 
+  .shadow-md {
+    --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, #0000001a), 0 2px 4px -2px var(--tw-shadow-color, #0000001a);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
   .transition-colors {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -494,6 +581,17 @@
     .hover\:bg-blue-600:hover {
       background-color: var(--color-blue-600);
     }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-stone-600:hover {
+      background-color: var(--color-stone-600);
+    }
+  }
+
+  .focus\:outline-none:focus {
+    --tw-outline-style: none;
+    outline-style: none;
   }
 
   .text-balance {
@@ -524,6 +622,11 @@ body {
   syntax: "*";
   inherits: false;
   initial-value: solid;
+}
+
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false
 }
 
 @property --tw-shadow {

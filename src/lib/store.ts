@@ -20,6 +20,7 @@ export type AppState = {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   addNode: (node: Node) => void;
+  updateNodeData: (id: string, data: Partial<AppState['nodes'][0]['data']>) => void;
   loadData: () => Promise<void>;
 };
 
@@ -73,10 +74,18 @@ export const useStore = create<AppState>((set, get) => ({
     set({ nodes: [...get().nodes, node] });
     db.nodes.add({
       id: node.id,
-      type: node.type || 'default',
+      type: node.type || 'thought',
       position: node.position,
       data: node.data as { label: string; content?: string },
     });
+  },
+  updateNodeData: (id, data) => {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
+      ),
+    });
+    db.nodes.update(id, { data: { ...get().nodes.find(n => n.id === id)?.data, ...data } as any });
   },
   loadData: async () => {
     const nodes = await db.nodes.toArray();
