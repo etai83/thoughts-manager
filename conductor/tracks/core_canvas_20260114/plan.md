@@ -2,21 +2,21 @@
 
 This plan outlines the steps to build the foundational graph canvas.
 
-## Phase 1: Project Initialization & Environment Setup
+## Phase 1: Project Initialization & Environment Setup [checkpoint: 7ef5e13]
 - [x] Task: Initialize Next.js project with TypeScript, Tailwind, and Vitest. (ce76aed)
 - [x] Task: Install core dependencies (React Flow, Zustand, Dexie.js).
 - [x] Task: Configure Dexie.js database schema for nodes and edges.
 - [x] Task: Set up Zustand store for graph state and persistence logic.
-- [~] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization & Environment Setup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization & Environment Setup' (Protocol in workflow.md)
 
 ## Phase 2: Core Canvas & Node Management
-- [ ] Task: Write Tests: Create basic React Flow canvas component.
-- [ ] Task: Implement Feature: Basic React Flow canvas with zoom/pan.
-- [ ] Task: Write Tests: Add node functionality.
-- [ ] Task: Implement Feature: UI for adding nodes to the canvas.
-- [ ] Task: Write Tests: Delete node functionality.
-- [ ] Task: Implement Feature: Ability to remove nodes.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Core Canvas & Node Management' (Protocol in workflow.md)
+- [x] Task: Write Tests: Create basic React Flow canvas component.
+- [x] Task: Implement Feature: Basic React Flow canvas with zoom/pan.
+- [x] Task: Write Tests: Add node functionality.
+- [x] Task: Implement Feature: UI for adding nodes to the canvas.
+- [x] Task: Write Tests: Delete node functionality.
+- [x] Task: Implement Feature: Ability to remove nodes.
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Core Canvas & Node Management' (Protocol in workflow.md)
 
 ## Phase 3: Linking & Persistence
 - [ ] Task: Write Tests: Edge creation and deletion.

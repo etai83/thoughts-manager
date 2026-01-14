@@ -6,7 +6,7 @@ import {
   type OnEdgesChange,
   type OnConnect,
   applyNodeChanges,
-  applyEdgesChange,
+  applyEdgeChanges,
   addEdge,
 } from '@xyflow/react';
 import { db } from './db';
@@ -39,7 +39,7 @@ export const useStore = create<AppState>((set, get) => ({
     });
   },
   onEdgesChange: (changes) => {
-    const updatedEdges = applyEdgesChange(changes, get().edges);
+    const updatedEdges = applyEdgeChanges(changes, get().edges);
     set({ edges: updatedEdges });
     
     changes.forEach((change) => {
