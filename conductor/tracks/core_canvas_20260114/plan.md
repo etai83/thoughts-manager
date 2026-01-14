@@ -3,7 +3,7 @@
 This plan outlines the steps to build the foundational graph canvas.
 
 ## Phase 1: Project Initialization & Environment Setup
-- [ ] Task: Initialize Next.js project with TypeScript, Tailwind, and Vitest.
+- [~] Task: Initialize Next.js project with TypeScript, Tailwind, and Vitest.
 - [ ] Task: Install core dependencies (React Flow, Zustand, Dexie.js).
 - [ ] Task: Configure Dexie.js database schema for nodes and edges.
 - [ ] Task: Set up Zustand store for graph state and persistence logic.
