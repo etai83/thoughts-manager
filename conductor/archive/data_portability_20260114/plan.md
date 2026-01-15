@@ -14,6 +14,6 @@ This plan outlines the steps to implement export and import features.
 - [x] Task: Implement Feature: Export each node as a separate .md file.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Markdown Export' (Protocol in workflow.md)
 
-## Phase 3: UI & Finishing Touches
+## Phase 3: UI & Finishing Touches [checkpoint: 4aecdfa]
 - [x] Task: Implement Feature: Add Export/Import buttons to the Canvas UI.
-- [~] Task: Conductor - User Manual Verification 'Phase 3: UI & Finishing Touches' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: UI & Finishing Touches' (Protocol in workflow.md)
