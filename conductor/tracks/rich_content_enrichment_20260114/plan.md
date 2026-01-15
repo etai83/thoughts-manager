@@ -9,7 +9,7 @@ This plan outlines the steps to add multimedia support to nodes.
 - [~] Task: Conductor - User Manual Verification 'Phase 1: Code Syntax Highlighting' (Protocol in workflow.md)
 
 ## Phase 2: Image Support
-- [ ] Task: Write Tests: Paste event handler logic (mocking clipboard data).
-- [ ] Task: Implement Feature: Handle image paste events in the `ThoughtNode` textarea, convert to Base64, and insert markdown image tag.
-- [ ] Task: Implement Feature: Ensure ReactMarkdown renders images correctly within the node.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Image Support' (Protocol in workflow.md)
+- [x] Task: Write Tests: Paste event handler logic (mocking clipboard data).
+- [x] Task: Implement Feature: Handle image paste events in the `ThoughtNode` textarea, convert to Base64, and insert markdown image tag.
+- [x] Task: Implement Feature: Ensure ReactMarkdown renders images correctly within the node.
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Image Support' (Protocol in workflow.md)
