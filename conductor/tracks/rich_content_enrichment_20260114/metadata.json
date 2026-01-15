@@ -1,0 +1,8 @@
+{
+  "id": "rich_content_enrichment_20260114",
+  "name": "Rich Content Enrichment",
+  "description": "Expand the capability of nodes to support images, link previews, and code syntax highlighting.",
+  "status": "todo",
+  "created_at": "2026-01-14",
+  "priority": "medium"
+}

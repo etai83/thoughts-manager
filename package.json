@@ -28,6 +28,7 @@
     "@orama/orama": "^2.0.25",
     "ollama": "^0.5.12",
     "jszip": "^3.10.1",
+    "react-syntax-highlighter": "^15.6.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@types/node": "^25.0.8",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.23",
     "eslint": "^9.39.2",
