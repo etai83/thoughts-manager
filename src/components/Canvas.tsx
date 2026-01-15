@@ -11,6 +11,8 @@ import '@xyflow/react/dist/style.css';
 import { useStore } from '@/lib/store';
 import ThoughtNode from './ThoughtNode';
 import { runLayout } from '@/lib/layout';
+import SearchBar from './SearchBar';
+import InsightsPanel from './InsightsPanel';
 
 const nodeTypes = {
   thought: ThoughtNode,
@@ -50,6 +52,7 @@ const Canvas: React.FC = () => {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }} data-testid="rf__wrapper">
+      <SearchBar />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -61,6 +64,7 @@ const Canvas: React.FC = () => {
       >
         <Background />
         <Controls />
+        <InsightsPanel />
         <Panel position="top-right">
           <div className="flex flex-col gap-2 bg-white p-2 border rounded shadow">
             <button

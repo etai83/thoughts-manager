@@ -5,6 +5,7 @@ export interface Node {
   type: string;
   position: { x: number; y: number };
   data: { label: string; content?: string };
+  embedding?: number[];
 }
 
 export interface Edge {
