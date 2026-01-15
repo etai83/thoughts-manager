@@ -1,4 +1,5 @@
 import { db } from './db';
+import JSZip from 'jszip';
 
 export const exportToJson = async () => {
   const nodes = await db.nodes.toArray();
@@ -17,6 +18,28 @@ export const exportToJson = async () => {
   const link = document.createElement('a');
   link.href = url;
   link.download = `thoughts-manager-export-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+export const exportToMarkdown = async () => {
+  const nodes = await db.nodes.toArray();
+  const zip = new JSZip();
+
+  for (const node of nodes) {
+    const filename = `${node.data.label.replace(/[/\\?%*:|"<>]/g, '-')}.md`;
+    const content = `# ${node.data.label}\n\n${node.data.content || ''}`;
+    zip.file(filename, content);
+  }
+
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `thoughts-manager-markdown-${new Date().toISOString().split('T')[0]}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

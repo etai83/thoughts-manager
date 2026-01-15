@@ -27,6 +27,7 @@
     "d3-force": "^3.0.0",
     "@orama/orama": "^2.0.25",
     "ollama": "^0.5.12",
+    "jszip": "^3.10.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

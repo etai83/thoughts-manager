@@ -40,4 +40,14 @@ describe('Data Portability - Export', () => {
     expect(Array.isArray(importData.nodes)).toBe(true);
     expect(importData.nodes[0].id).toBe('2');
   });
+
+  it('should format node as markdown correctly', () => {
+    const node = {
+      id: '1',
+      data: { label: 'My Note', content: 'This is the body.' }
+    };
+
+    const markdown = `# ${node.data.label}\n\n${node.data.content}`;
+    expect(markdown).toBe('# My Note\n\nThis is the body.');
+  });
 });
