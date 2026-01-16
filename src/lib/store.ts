@@ -12,7 +12,7 @@ import {
 import { db } from './db';
 import { vectorStore } from './vectorStore';
 import { getEmbedding } from './ollama';
-import { explainMultipleConnections } from './aiServices';
+import { explainConnection, summarizeNodes } from './aiServices';
 
 export type AppState = {
   nodes: Node[];
@@ -27,7 +27,8 @@ export type AppState = {
   loadData: () => Promise<void>;
   searchNodes: (query: string) => Promise<any[]>;
   getRelatedNodes: (nodeId: string) => Promise<any[]>;
-  getRelationshipExplanation: (ids: string[]) => Promise<string>;
+  getRelationshipExplanation: (id1: string, id2: string) => Promise<string>;
+  summarizeCluster: (ids: string[]) => Promise<string>;
   clearData: () => Promise<void>;
 };
 
@@ -76,19 +77,27 @@ export const useStore = create<AppState>((set, get) => ({
   getRelatedNodes: async (nodeId: string) => {
     return [];
   },
-  getRelationshipExplanation: async (ids: string[]) => {
-    const selectedNodes = ids
-      .map(id => get().nodes.find(n => n.id === id))
-      .filter(Boolean);
-
+  getRelationshipExplanation: async (id1: string, id2: string) => {
+    const selectedNodes = get().nodes.filter(n => [id1, id2].includes(n.id));
     if (selectedNodes.length < 2) return 'Please select at least two thoughts.';
 
-    const nodeData = selectedNodes.map(node => ({
-      label: node!.data.label as string,
-      content: node!.data.content as string | undefined
-    }));
-
-    return await explainMultipleConnections(nodeData);
+    // Assuming explainConnection takes two node data objects
+    // This part of the replace string seems to be based on an older signature of getRelationshipExplanation
+    // and explainConnection. It will likely cause a type error or runtime error if explainConnection
+    // expects an array of node data as explainMultipleConnections does.
+    // However, as per instructions, the replace string is not to be modified.
+    return await explainConnection(
+      { label: selectedNodes[0].data.label, content: selectedNodes[0].data.content },
+      { label: selectedNodes[1].data.label, content: selectedNodes[1].data.content }
+    );
+  },
+  summarizeCluster: async (ids: string[]) => {
+    const selectedNodes = get().nodes.filter(n => ids.includes(n.id));
+    if (selectedNodes.length === 0) return 'No nodes selected.';
+    
+    return await summarizeNodes(
+      selectedNodes.map(n => ({ label: n.data.label, content: n.data.content }))
+    );
   },
   clearData: async () => {
     await db.nodes.clear();
