@@ -1,0 +1,30 @@
+{
+  "category": "Uncategorized",
+  "description": "add a button \"Delete All Thoughts\"",
+  "title": "",
+  "images": [],
+  "imagePaths": [],
+  "textFilePaths": [],
+  "skipTests": false,
+  "model": "google/antigravity-gemini-3-pro-high",
+  "thinkingLevel": "none",
+  "reasoningEffort": "none",
+  "priority": 2,
+  "planningMode": "skip",
+  "requirePlanApproval": false,
+  "dependencies": [],
+  "workMode": "auto",
+  "titleGenerating": false,
+  "status": "backlog",
+  "id": "feature-1768577808298-b76dr8hev",
+  "descriptionHistory": [
+    {
+      "description": "add a button \"Delete All Thoughts\"",
+      "timestamp": "2026-01-16T15:36:48.326Z",
+      "source": "initial"
+    }
+  ],
+  "startedAt": "2026-01-16T15:37:07.348Z",
+  "updatedAt": "2026-01-16T15:37:07.455Z",
+  "branchName": "feature/main-1768577844650-g3d1"
+}

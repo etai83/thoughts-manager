@@ -13,7 +13,14 @@ const Sidebar: React.FC = () => {
     addNode,
     setNodes,
     loadData,
+    clearData,
   } = useStore();
+
+  const handleDeleteAll = async () => {
+    if (window.confirm('Are you sure you want to delete ALL thoughts? This action cannot be undone.')) {
+      await clearData();
+    }
+  };
 
   const handleAddNode = () => {
     const id = Date.now().toString();
@@ -100,6 +107,13 @@ const Sidebar: React.FC = () => {
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">↑</span>
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
+          <button
+            onClick={handleDeleteAll}
+            className="w-full text-left px-3 py-2 text-xs bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition-colors flex items-center justify-between group mt-2"
+          >
+            <span>Delete All Thoughts</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">🗑️</span>
+          </button>
         </div>
       </div>
       
