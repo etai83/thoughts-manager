@@ -1,6 +1,58 @@
 import { db } from './db';
 import JSZip from 'jszip';
 
+/**
+ * Formats a date for filenames (YYYY-MM-DD)
+ */
+const getDatestamp = () => new Date().toISOString().split('T')[0];
+
+/**
+ * Handles saving content to the local computer.
+ * Uses the File System Access API (showSaveFilePicker) if available,
+ * otherwise falls back to the standard download method.
+ */
+const saveFile = async (content: string | Blob, fileName: string, mimeType: string, extension: string) => {
+  // 1. Try File System Access API
+  if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
+    try {
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{
+          description: mimeType === 'application/json' ? 'JSON File' : 'ZIP Archive',
+          accept: { [mimeType]: [`.${extension}`] },
+        }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return;
+    } catch (err: any) {
+      if (err.name === 'AbortError') return;
+      console.warn('File System Access API failed or cancelled, falling back...:', err);
+      // Fall through to standard download
+    }
+  }
+
+  // 2. Fallback: Standard Download
+  const blob = content instanceof Blob ? content : new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+
+  // Ensure the link is on the page for some browsers
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup with delay to ensure browser handles the click
+  setTimeout(() => {
+    if (link.parentNode) {
+      document.body.removeChild(link);
+    }
+    URL.revokeObjectURL(url);
+  }, 1000);
+};
+
 export const exportToJson = async () => {
   const nodes = await db.nodes.toArray();
   const edges = await db.edges.toArray();
@@ -12,16 +64,8 @@ export const exportToJson = async () => {
     edges,
   };
 
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `thoughts-manager-export-${new Date().toISOString().split('T')[0]}.json`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  const fileName = `thoughts-manager-export-${getDatestamp()}.json`;
+  await saveFile(JSON.stringify(exportData, null, 2), fileName, 'application/json', 'json');
 };
 
 export const exportToMarkdown = async () => {
@@ -29,21 +73,15 @@ export const exportToMarkdown = async () => {
   const zip = new JSZip();
 
   for (const node of nodes) {
+    // Sanitize filename
     const filename = `${node.data.label.replace(/[/\\?%*:|"<>]/g, '-')}.md`;
     const content = `# ${node.data.label}\n\n${node.data.content || ''}`;
     zip.file(filename, content);
   }
 
   const blob = await zip.generateAsync({ type: 'blob' });
-  const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `thoughts-manager-markdown-${new Date().toISOString().split('T')[0]}.zip`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  const fileName = `thoughts-manager-markdown-${getDatestamp()}.zip`;
+  await saveFile(blob, fileName, 'application/zip', 'zip');
 };
 
 export const importFromJson = async (file: File): Promise<void> => {
@@ -52,7 +90,7 @@ export const importFromJson = async (file: File): Promise<void> => {
     reader.onload = async (event) => {
       try {
         const json = JSON.parse(event.target?.result as string);
-        
+
         // Basic validation
         if (!json.nodes || !Array.isArray(json.nodes)) {
           throw new Error('Invalid export file: missing nodes');
