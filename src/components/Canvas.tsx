@@ -17,6 +17,7 @@ import InsightsPanel from './InsightsPanel';
 import AIPartnerPanel from './AIPartnerPanel';
 import AIChat from './AIChat';
 import { exportToJson, exportToMarkdown, importFromJson } from '@/lib/dataPortability';
+import pkg from '../../package.json';
 
 const nodeTypes = {
   thought: ThoughtNode,
@@ -109,7 +110,10 @@ const Canvas: React.FC = () => {
 
         <Panel position="bottom-left">
           <div className="flex flex-col gap-2 bg-white p-2 border rounded shadow text-black">
-            <div className="text-xs font-bold border-b mb-1">Data Management</div>
+            <div className="text-xs font-bold border-b mb-1 flex justify-between items-center">
+              Data Management
+              <span className="text-[10px] bg-stone-100 px-1 rounded text-stone-500">v{pkg.version}</span>
+            </div>
             <button
               onClick={exportToJson}
               className="text-xs bg-gray-200 hover:bg-gray-300 p-1 rounded transition-colors"

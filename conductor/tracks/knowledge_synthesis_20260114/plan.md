@@ -12,7 +12,7 @@ This plan outlines the steps to implement advanced AI synthesis features using l
 - [x] Task: Implement Feature: UI to trigger summarization on selected nodes and display a floating summary card.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Cluster Summarization' (Protocol in workflow.md)
 
-## Phase 3: Thought Expansion & Graph Q&A (RAG)
+## Phase 3: Thought Expansion & Graph Q&A (RAG) [checkpoint: 5de9090]
 - [x] Task: Implement Feature: "Continue Thought" suggestion button in the node editor.
 - [x] Task: Implement Feature: Global AI Chat interface using RAG (Vector Search + LLM).
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Thought Expansion & Graph Q&A' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Thought Expansion & Graph Q&A' (Protocol in workflow.md)
