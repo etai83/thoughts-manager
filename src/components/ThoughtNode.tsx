@@ -14,13 +14,16 @@ export type ThoughtNodeData = {
 
 const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSuggesting, setIsSuggesting] = useState(false);
   const updateNodeData = useStore((s) => s.updateNodeData);
+  const suggestExpansion = useStore((s) => s.suggestExpansion);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
   };
 
   const handleBlur = () => {
+    // Only blur if we're not clicking the suggest button (handled by onMouseDown)
     setIsEditing(false);
   };
 
@@ -30,6 +33,14 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
 
   const handleLabelChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     updateNodeData(id, { label: evt.target.value });
+  };
+
+  const handleSuggest = async () => {
+    setIsSuggesting(true);
+    const suggestion = await suggestExpansion(id);
+    const newContent = (data.content || '') + '\n\n**AI Suggestion:** ' + suggestion;
+    updateNodeData(id, { content: newContent });
+    setIsSuggesting(false);
   };
 
   const handlePaste = async (evt: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -77,6 +88,14 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
               onPaste={handlePaste}
               placeholder="Paste images or type markdown..."
             />
+            <button
+              onMouseDown={(e) => e.preventDefault()} // Prevent blur before click
+              onClick={handleSuggest}
+              disabled={isSuggesting}
+              className="mt-2 text-[10px] bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700 transition-colors disabled:opacity-50"
+            >
+              {isSuggesting ? 'Thinking...' : 'AI Suggestion'}
+            </button>
           </>
         ) : (
           <div onDoubleClick={handleDoubleClick} className="text-black overflow-hidden">
@@ -118,4 +137,4 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
   );
 };
 
-export default ThoughtNode;
+export default React.memo(ThoughtNode);

@@ -6,6 +6,7 @@ import {
   Background,
   Controls,
   Panel,
+  SelectionMode,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useStore } from '@/lib/store';
@@ -14,6 +15,7 @@ import { runLayout } from '@/lib/layout';
 import SearchBar from './SearchBar';
 import InsightsPanel from './InsightsPanel';
 import AIPartnerPanel from './AIPartnerPanel';
+import AIChat from './AIChat';
 import { exportToJson, exportToMarkdown, importFromJson } from '@/lib/dataPortability';
 
 const nodeTypes = {
@@ -64,6 +66,11 @@ const Canvas: React.FC = () => {
     }
   };
 
+  const handleNodeClick = (event: React.MouseEvent, node: any) => {
+    const isMulti = event.metaKey || event.ctrlKey || event.shiftKey;
+    useStore.getState().toggleSelection(node.id, isMulti);
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh' }} data-testid="rf__wrapper">
       <SearchBar />
@@ -73,13 +80,16 @@ const Canvas: React.FC = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={handleNodeClick}
         nodeTypes={nodeTypes}
         fitView
+        multiSelectionKeyCode={['Meta', 'Ctrl']}
       >
         <Background />
         <Controls />
         <InsightsPanel />
         <AIPartnerPanel />
+        <AIChat />
         <Panel position="top-right">
           <div className="flex flex-col gap-2 bg-white p-2 border rounded shadow text-black">
             <button

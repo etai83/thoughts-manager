@@ -58,3 +58,37 @@ export const summarizeNodes = async (nodes: { label: string; content?: string }[
   return await generateText(prompt);
 };
 
+export const expandThought = async (node: { label: string; content?: string }) => {
+  const prompt = `
+    You are a creative thinking assistant. Below is a thought from a user's knowledge graph.
+    Based on the label and content, suggest a short continuation, a related question, or a next logical step for this thought.
+    Be helpful and brief.
+
+    Thought:
+    Label: ${node.label}
+    Content: ${node.content || 'No content'}
+
+    Suggestion:
+  `;
+
+  return await generateText(prompt);
+};
+
+export const askGraph = async (question: string, contextNodes: { label: string; content?: string }[]) => {
+  const context = contextNodes.map((n, i) => `Thought ${i+1}: ${n.label} - ${n.content || ''}`).join('\n\n');
+  const prompt = `
+    You are a knowledge synthesis assistant. A user is asking a question about their knowledge graph.
+    Based on the provided context nodes, answer the user's question. 
+    If the context does not contain enough information, say so, but try to be as helpful as possible with what you have.
+
+    Context:
+    ${context}
+
+    User Question: ${question}
+
+    Answer:
+  `;
+
+  return await generateText(prompt);
+};
+
