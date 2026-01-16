@@ -12,7 +12,7 @@ export type ThoughtNodeData = {
   content?: string;
 };
 
-const ThoughtNode = ({ id, data }: NodeProps<Node<ThoughtNodeData>>) => {
+const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) => {
   const [isEditing, setIsEditing] = useState(false);
   const updateNodeData = useStore((s) => s.updateNodeData);
 
@@ -51,8 +51,13 @@ const ThoughtNode = ({ id, data }: NodeProps<Node<ThoughtNodeData>>) => {
     }
   };
 
+  // Dynamic border color based on selection state
+  const borderClass = selected
+    ? 'border-blue-500 shadow-lg shadow-blue-200'
+    : 'border-stone-400';
+
   return (
-    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 min-w-[200px] max-w-[400px] text-black">
+    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${borderClass} min-w-[200px] max-w-[400px] text-black transition-all duration-200`}>
       <Handle type="target" position={Position.Top} className="w-16 !bg-teal-500" />
 
       <div className="flex flex-col text-black">

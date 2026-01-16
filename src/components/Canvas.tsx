@@ -13,6 +13,7 @@ import ThoughtNode from './ThoughtNode';
 import { runLayout } from '@/lib/layout';
 import SearchBar from './SearchBar';
 import InsightsPanel from './InsightsPanel';
+import AIPartnerPanel from './AIPartnerPanel';
 import { exportToJson, exportToMarkdown, importFromJson } from '@/lib/dataPortability';
 
 const nodeTypes = {
@@ -56,7 +57,7 @@ const Canvas: React.FC = () => {
     if (file) {
       try {
         await importFromJson(file);
-        await loadData(); // Reload store from DB
+        await loadData();
       } catch (error) {
         alert('Import failed: ' + (error as Error).message);
       }
@@ -78,8 +79,9 @@ const Canvas: React.FC = () => {
         <Background />
         <Controls />
         <InsightsPanel />
+        <AIPartnerPanel />
         <Panel position="top-right">
-          <div className="flex flex-col gap-2 bg-white p-2 border rounded shadow">
+          <div className="flex flex-col gap-2 bg-white p-2 border rounded shadow text-black">
             <button
               onClick={handleAddNode}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"

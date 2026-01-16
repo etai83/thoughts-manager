@@ -12,6 +12,7 @@ import {
 import { db } from './db';
 import { vectorStore } from './vectorStore';
 import { getEmbedding } from './ollama';
+import { explainMultipleConnections } from './aiServices';
 
 export type AppState = {
   nodes: Node[];
@@ -26,6 +27,7 @@ export type AppState = {
   loadData: () => Promise<void>;
   searchNodes: (query: string) => Promise<any[]>;
   getRelatedNodes: (nodeId: string) => Promise<any[]>;
+  getRelationshipExplanation: (ids: string[]) => Promise<string>;
   clearData: () => Promise<void>;
 };
 
@@ -53,7 +55,7 @@ export const useStore = create<AppState>((set, get) => ({
     set({ nodes: [...get().nodes, node] });
     // Side effect to update DB could go here, but keeping it simple for now to match synchronous signature if strictly needed,
     // though async is allowed. Let's stick to state update + db sync pattern if loadData fetches from db.
-    db.nodes.add(node); 
+    db.nodes.add(node);
   },
   updateNodeData: (id, data) => {
     set({
@@ -73,6 +75,20 @@ export const useStore = create<AppState>((set, get) => ({
   },
   getRelatedNodes: async (nodeId: string) => {
     return [];
+  },
+  getRelationshipExplanation: async (ids: string[]) => {
+    const selectedNodes = ids
+      .map(id => get().nodes.find(n => n.id === id))
+      .filter(Boolean);
+
+    if (selectedNodes.length < 2) return 'Please select at least two thoughts.';
+
+    const nodeData = selectedNodes.map(node => ({
+      label: node!.data.label as string,
+      content: node!.data.content as string | undefined
+    }));
+
+    return await explainMultipleConnections(nodeData);
   },
   clearData: async () => {
     await db.nodes.clear();
