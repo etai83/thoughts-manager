@@ -26,7 +26,10 @@ const Canvas: React.FC = () => {
     onEdgesChange,
     onConnect,
     loadData,
+    getFilteredNodes,
   } = useStore();
+
+  const displayedNodes = getFilteredNodes();
 
   useEffect(() => {
     loadData();
@@ -41,7 +44,7 @@ const Canvas: React.FC = () => {
     <div style={{ width: '100%', height: '100%' }} data-testid="rf__wrapper">
       <SearchBar />
       <ReactFlow
-        nodes={nodes}
+        nodes={displayedNodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

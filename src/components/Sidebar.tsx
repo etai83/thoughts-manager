@@ -14,6 +14,10 @@ const Sidebar: React.FC = () => {
     setNodes,
     loadData,
     clearData,
+    selectedTags,
+    setSelectedTags,
+    getAllTags,
+    getFilteredNodes,
   } = useStore();
 
   const handleDeleteAll = async () => {
@@ -27,11 +31,27 @@ const Sidebar: React.FC = () => {
     const newNode = {
       id,
       position: { x: Math.random() * 400, y: Math.random() * 400 },
-      data: { label: `Thought ${id}`, content: '' },
+      data: { label: `Thought ${id}`, content: '', tags: [] },
       type: 'thought',
     };
     addNode(newNode);
   };
+
+  const handleTagToggle = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const clearTagFilter = () => {
+    setSelectedTags([]);
+  };
+
+  const allTags = getAllTags();
+  const filteredNodes = getFilteredNodes();
+  const isFiltering = selectedTags.length > 0;
 
   const handleLayout = () => {
     const layoutedNodes = runLayout(nodes, edges);
@@ -83,6 +103,56 @@ const Sidebar: React.FC = () => {
         <div className="text-xs text-gray-500 px-1 leading-relaxed">
           Use semantic search at the top or ask the AI assistant for insights.
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Tags</h2>
+          {isFiltering && (
+            <button
+              onClick={clearTagFilter}
+              className="text-[10px] text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        {allTags.length === 0 ? (
+          <div className="text-xs text-gray-400 px-1 italic">
+            No tags yet. Add tags to thoughts to organize them.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1 max-h-48 overflow-y-auto">
+            {allTags.map((tag) => (
+              <label
+                key={tag}
+                className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                  selectedTags.includes(tag)
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'hover:bg-gray-100 text-gray-700'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedTags.includes(tag)}
+                  onChange={() => handleTagToggle(tag)}
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-xs font-medium flex-1">
+                  #{tag}
+                </span>
+                <span className="text-[10px] text-gray-400">
+                  {nodes.filter(n => (n.data as any).tags?.includes(tag)).length}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+        {isFiltering && (
+          <div className="text-[10px] text-blue-600 font-medium px-1">
+            Showing {filteredNodes.length} of {nodes.length} thoughts
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 mt-auto border-t pt-6">
