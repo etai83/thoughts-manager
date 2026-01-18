@@ -4,7 +4,7 @@ export interface Node {
   id: string;
   type: string;
   position: { x: number; y: number };
-  data: { label: string; content?: string };
+  data: { label: string; content?: string; tags?: string[] };
   embedding?: number[];
 }
 

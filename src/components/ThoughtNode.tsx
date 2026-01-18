@@ -10,12 +10,16 @@ import { useStore } from '@/lib/store';
 export type ThoughtNodeData = {
   label: string;
   content?: string;
+  tags?: string[];
 };
 
 const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
+  const [newTag, setNewTag] = useState('');
   const updateNodeData = useStore((s) => s.updateNodeData);
+  const addTag = useStore((s) => s.addTag);
+  const removeTag = useStore((s) => s.removeTag);
   const suggestExpansion = useStore((s) => s.suggestExpansion);
 
   const handleDoubleClick = () => {
@@ -62,6 +66,21 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
     }
   };
 
+  const handleAddTag = () => {
+    const trimmedTag = newTag.trim().toLowerCase().replace(/^#/, '');
+    if (trimmedTag && !data.tags?.includes(trimmedTag)) {
+      addTag(id, trimmedTag);
+      setNewTag('');
+    }
+  };
+
+  const handleTagKeyPress = (evt: React.KeyboardEvent<HTMLInputElement>) => {
+    if (evt.key === 'Enter') {
+      evt.preventDefault();
+      handleAddTag();
+    }
+  };
+
   // Dynamic border color based on selection state
   const borderClass = selected
     ? 'border-blue-500 shadow-lg shadow-blue-200'
@@ -96,10 +115,60 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
             >
               {isSuggesting ? 'Thinking...' : 'AI Suggestion'}
             </button>
+
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="text-[10px] font-semibold text-gray-500 mb-2">Tags</div>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {(data.tags || []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full flex items-center gap-1"
+                  >
+                    #{tag}
+                    <button
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => removeTag(id, tag)}
+                      className="hover:text-blue-900 font-bold ml-1"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyPress={handleTagKeyPress}
+                  placeholder="Add tag..."
+                  className="flex-1 text-[10px] border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                />
+                <button
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={handleAddTag}
+                  className="text-[10px] bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
           </>
         ) : (
           <div onDoubleClick={handleDoubleClick} className="text-black overflow-hidden">
             <div className="font-bold border-b mb-2 text-black">{data.label}</div>
+            {(data.tags || []).length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {(data.tags || []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
             <div className="text-xs prose prose-slate max-w-none text-black break-words">
               <ReactMarkdown
                 components={{

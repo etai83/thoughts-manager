@@ -17,6 +17,7 @@ import { explainConnection, summarizeNodes, expandThought, askGraph } from './ai
 export type AppState = {
   nodes: Node[];
   edges: Edge[];
+  selectedTags: string[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -24,6 +25,11 @@ export type AppState = {
   setEdges: (edges: Edge[]) => void;
   addNode: (node: Node) => void;
   updateNodeData: (id: string, data: Partial<AppState['nodes'][0]['data']>) => void;
+  addTag: (nodeId: string, tag: string) => void;
+  removeTag: (nodeId: string, tag: string) => void;
+  setSelectedTags: (tags: string[]) => void;
+  getFilteredNodes: () => Node[];
+  getAllTags: () => string[];
   loadData: () => Promise<void>;
   searchNodes: (query: string) => Promise<any[]>;
   getRelatedNodes: (nodeId: string) => Promise<any[]>;
@@ -38,6 +44,7 @@ export type AppState = {
 export const useStore = create<AppState>((set, get) => ({
   nodes: [],
   edges: [],
+  selectedTags: [],
   onNodesChange: (changes) => {
     // Filter out selection changes - we handle selection manually via toggleSelection
     const nonSelectChanges = changes.filter((c) => c.type !== 'select');
@@ -89,7 +96,7 @@ export const useStore = create<AppState>((set, get) => ({
       id: node.id,
       type: node.type || 'thought',
       position: node.position,
-      data: node.data as { label: string; content?: string },
+      data: node.data as { label: string; content?: string; tags?: string[] },
     });
   },
   updateNodeData: (id, data) => {
@@ -99,6 +106,43 @@ export const useStore = create<AppState>((set, get) => ({
       ),
     });
     db.nodes.update(id, { data: { ...get().nodes.find(n => n.id === id)?.data, ...data } as any });
+  },
+  addTag: (nodeId, tag) => {
+    const node = get().nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    const currentTags = (node.data as any).tags || [];
+    if (!currentTags.includes(tag)) {
+      const newTags = [...currentTags, tag];
+      get().updateNodeData(nodeId, { tags: newTags });
+    }
+  },
+  removeTag: (nodeId, tag) => {
+    const node = get().nodes.find(n => n.id === nodeId);
+    if (!node || !(node.data as any).tags) return;
+
+    const newTags = (node.data as any).tags.filter((t: string) => t !== tag);
+    get().updateNodeData(nodeId, { tags: newTags });
+  },
+  setSelectedTags: (tags) => {
+    set({ selectedTags: tags });
+  },
+  getFilteredNodes: () => {
+    const { nodes, selectedTags } = get();
+    if (selectedTags.length === 0) return nodes;
+
+    return nodes.filter(node => {
+      const nodeTags = (node.data as any).tags || [];
+      return selectedTags.every(tag => nodeTags.includes(tag));
+    });
+  },
+  getAllTags: () => {
+    const { nodes } = get();
+    const tagSet = new Set<string>();
+    nodes.forEach(node => {
+      ((node.data as any).tags || []).forEach((tag: string) => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
   },
   loadData: async () => {
     await vectorStore.init();
@@ -141,8 +185,8 @@ export const useStore = create<AppState>((set, get) => ({
     if (!node1 || !node2) return 'Nodes not found.';
 
     return await explainConnection(
-      { label: node1.data.label, content: node1.data.content },
-      { label: node2.data.label, content: node2.data.content }
+      { label: node1.data.label as string, content: node1.data.content as string | undefined },
+      { label: node2.data.label as string, content: node2.data.content as string | undefined }
     );
   },
   summarizeCluster: async (ids: string[]) => {
@@ -150,14 +194,14 @@ export const useStore = create<AppState>((set, get) => ({
     if (selectedNodes.length === 0) return 'No nodes selected.';
 
     return await summarizeNodes(
-      selectedNodes.map(n => ({ label: n.data.label, content: n.data.content }))
+      selectedNodes.map(n => ({ label: n.data.label as string, content: n.data.content as string | undefined }))
     );
   },
   suggestExpansion: async (id: string) => {
     const node = get().nodes.find(n => n.id === id);
     if (!node) return 'Node not found.';
 
-    return await expandThought({ label: node.data.label, content: node.data.content });
+    return await expandThought({ label: node.data.label as string, content: node.data.content as string | undefined });
   },
   chatWithGraph: async (question: string) => {
     if (!question) return 'Please ask a question.';
@@ -166,8 +210,8 @@ export const useStore = create<AppState>((set, get) => ({
       const queryEmbedding = await getEmbedding(question);
       const searchResults = await vectorStore.searchByVector(queryEmbedding, 5);
       const contextNodes = searchResults.hits.map(hit => ({
-        label: hit.document.label,
-        content: hit.document.content
+        label: hit.document.label as string,
+        content: hit.document.content as string | undefined
       }));
 
       if (contextNodes.length === 0) {
@@ -195,6 +239,6 @@ export const useStore = create<AppState>((set, get) => ({
   clearData: async () => {
     await db.nodes.clear();
     await db.edges.clear();
-    set({ nodes: [], edges: [] });
+    set({ nodes: [], edges: [], selectedTags: [] });
   },
 }));
