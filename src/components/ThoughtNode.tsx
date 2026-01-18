@@ -23,7 +23,6 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
   };
 
   const handleBlur = () => {
-    // Only blur if we're not clicking the suggest button (handled by onMouseDown)
     setIsEditing(false);
   };
 
@@ -62,26 +61,28 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
     }
   };
 
-  // Dynamic border color based on selection state
-  const borderClass = selected
-    ? 'border-blue-500 shadow-lg shadow-blue-200'
-    : 'border-stone-400';
+  const selectedClass = selected ? 'border-primary shadow-[0_0_15px_rgba(17,180,212,0.5)]' : 'border-white/10 hover:border-primary';
 
   return (
-    <div className={`px-4 py-2 shadow-md rounded-md bg-white border-2 ${borderClass} min-w-[200px] max-w-[400px] text-black transition-all duration-200`}>
-      <Handle type="target" position={Position.Top} className="w-16 !bg-teal-500" />
+    <div className={`glass-panel rounded-xl p-4 transition-all duration-200 min-w-[250px] max-w-[400px] border ${selectedClass}`}>
+      <Handle type="target" position={Position.Top} className="!bg-primary !w-3 !h-3" />
 
-      <div className="flex flex-col text-black">
+      <div className="flex justify-between items-start mb-2">
+        <span className="px-2 py-0.5 bg-primary/20 text-primary text-[9px] font-black rounded uppercase tracking-widest">Active</span>
+        <span className="material-symbols-outlined text-[#9db4b9] text-sm cursor-pointer hover:text-white">more_horiz</span>
+      </div>
+
+      <div className="flex flex-col text-white">
         {isEditing ? (
           <>
             <input
-              className="font-bold border-b mb-2 focus:outline-none text-black"
+              className="font-bold border-b border-white/20 mb-2 focus:outline-none bg-transparent text-white placeholder-white/50"
               value={data.label}
               onChange={handleLabelChange}
               autoFocus
             />
             <textarea
-              className="text-xs border rounded p-1 focus:outline-none min-h-[150px] text-black font-mono"
+              className="text-xs border border-white/20 rounded p-1 focus:outline-none min-h-[150px] bg-black/20 text-white font-mono"
               value={data.content || ''}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -89,22 +90,22 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
               placeholder="Paste images or type markdown..."
             />
             <button
-              onMouseDown={(e) => e.preventDefault()} // Prevent blur before click
+              onMouseDown={(e) => e.preventDefault()}
               onClick={handleSuggest}
               disabled={isSuggesting}
-              className="mt-2 text-[10px] bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700 transition-colors disabled:opacity-50"
+              className="mt-2 text-[10px] bg-primary/20 text-primary border border-primary/50 px-2 py-1 rounded hover:bg-primary/30 transition-colors disabled:opacity-50 uppercase font-bold tracking-wide"
             >
               {isSuggesting ? 'Thinking...' : 'AI Suggestion'}
             </button>
           </>
         ) : (
-          <div onDoubleClick={handleDoubleClick} className="text-black overflow-hidden">
-            <div className="font-bold border-b mb-2 text-black">{data.label}</div>
-            <div className="text-xs prose prose-slate max-w-none text-black break-words">
+          <div onDoubleClick={handleDoubleClick} className="text-white overflow-hidden">
+            <h3 className="text-sm font-bold mb-2 text-white">{data.label}</h3>
+            <div className="text-xs text-[#9db4b9] leading-relaxed line-clamp-4 prose prose-invert prose-p:my-1 prose-headings:my-1 max-w-none">
               <ReactMarkdown
                 components={{
                   img({ node, ...props }: any) {
-                    return <img {...props} className="max-w-full h-auto rounded-sm my-2 shadow-sm" />;
+                    return <img {...props} className="max-w-full h-auto rounded-sm my-2 shadow-sm border border-white/10" />;
                   },
                   code({ node, inline, className, children, ...props }: any) {
                     const match = /language-(\w+)/.exec(className || '');
@@ -128,11 +129,15 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
                 {data.content || 'Double click to edit...'}
               </ReactMarkdown>
             </div>
+            <div className="mt-3 flex gap-2">
+                <span className="text-[10px] text-primary font-medium">#research</span>
+                <span className="text-[10px] text-[#9db4b9] font-medium">#draft</span>
+            </div>
           </div>
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className="w-16 !bg-teal-500" />
+      <Handle type="source" position={Position.Bottom} className="!bg-primary !w-3 !h-3" />
     </div>
   );
 };

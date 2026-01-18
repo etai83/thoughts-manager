@@ -140,9 +140,12 @@ export const useStore = create<AppState>((set, get) => ({
     const node2 = get().nodes.find(n => n.id === id2);
     if (!node1 || !node2) return 'Nodes not found.';
 
+    const d1 = node1.data as { label: string; content?: string };
+    const d2 = node2.data as { label: string; content?: string };
+
     return await explainConnection(
-      { label: node1.data.label, content: node1.data.content },
-      { label: node2.data.label, content: node2.data.content }
+      { label: d1.label, content: d1.content },
+      { label: d2.label, content: d2.content }
     );
   },
   summarizeCluster: async (ids: string[]) => {
@@ -150,14 +153,18 @@ export const useStore = create<AppState>((set, get) => ({
     if (selectedNodes.length === 0) return 'No nodes selected.';
 
     return await summarizeNodes(
-      selectedNodes.map(n => ({ label: n.data.label, content: n.data.content }))
+      selectedNodes.map(n => {
+        const d = n.data as { label: string; content?: string };
+        return { label: d.label, content: d.content };
+      })
     );
   },
   suggestExpansion: async (id: string) => {
     const node = get().nodes.find(n => n.id === id);
     if (!node) return 'Node not found.';
 
-    return await expandThought({ label: node.data.label, content: node.data.content });
+    const d = node.data as { label: string; content?: string };
+    return await expandThought({ label: d.label, content: d.content });
   },
   chatWithGraph: async (question: string) => {
     if (!question) return 'Please ask a question.';
