@@ -67,6 +67,7 @@ interface SheetsResponse {
 export interface SheetThought {
     rowIndex: number;
     timestamp: string;
+    title: string;
     content: string;
     synced: boolean;
 }
@@ -236,7 +237,7 @@ export const fetchThoughtsFromSheet = async (spreadsheetId: string): Promise<She
     try {
         const response = await window.gapi!.client.sheets.spreadsheets.values.get({
             spreadsheetId,
-            range: 'A:C', // Timestamp, Thought, Synced columns
+            range: 'A:D', // Timestamp, Title, Content, Synced columns
         });
 
         const values = response.result.values;
@@ -248,8 +249,9 @@ export const fetchThoughtsFromSheet = async (spreadsheetId: string): Promise<She
         return values.slice(1).map((row, index) => ({
             rowIndex: index + 2, // 1-indexed, +1 for header
             timestamp: row[0] || '',
-            content: row[1] || '',
-            synced: row[2]?.toLowerCase() === '✓' || row[2]?.toLowerCase() === 'true' || row[2]?.toLowerCase() === 'yes',
+            title: row[1] || '',
+            content: row[2] || '',
+            synced: row[3]?.toLowerCase() === '✓' || row[3]?.toLowerCase() === 'true' || row[3]?.toLowerCase() === 'yes',
         }));
     } catch (error) {
         console.error('Failed to fetch from sheet:', error);
@@ -262,6 +264,7 @@ export const fetchThoughtsFromSheet = async (spreadsheetId: string): Promise<She
  */
 export const appendThoughtToSheet = async (
     spreadsheetId: string,
+    title: string,
     content: string,
     timestamp?: string
 ): Promise<void> => {
@@ -274,10 +277,10 @@ export const appendThoughtToSheet = async (
     try {
         await window.gapi!.client.sheets.spreadsheets.values.append({
             spreadsheetId,
-            range: 'A:C',
+            range: 'A:D',
             valueInputOption: 'USER_ENTERED',
             resource: {
-                values: [[ts, content, '✓']], // Mark as synced since we're adding from the app
+                values: [[ts, title, content, '✓']], // Mark as synced since we're adding from the app
             },
         });
     } catch (error) {
@@ -300,7 +303,7 @@ export const markRowAsSynced = async (
     try {
         await window.gapi!.client.sheets.spreadsheets.values.update({
             spreadsheetId,
-            range: `C${rowIndex}`, // "Synced" column
+            range: `D${rowIndex}`, // "Synced" column
             valueInputOption: 'USER_ENTERED',
             resource: {
                 values: [['✓']],

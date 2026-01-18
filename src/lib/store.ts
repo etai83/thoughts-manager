@@ -403,7 +403,7 @@ export const useStore = create<AppState>((set, get) => ({
             y: 200 + Math.random() * 300,
           },
           data: {
-            label: thought.content.slice(0, 50) + (thought.content.length > 50 ? '...' : ''),
+            label: thought.title || thought.content.slice(0, 50) + (thought.content.length > 50 ? '...' : ''),
             content: thought.content,
           },
           type: 'thought',
@@ -463,15 +463,15 @@ export const useStore = create<AppState>((set, get) => ({
       let exported = 0;
 
       for (const node of nodes) {
-        const content = ((node.data.content as string) || (node.data.label as string) || '');
-        if (!content.trim()) continue;
+        const title = (node.data.label as string) || '';
+        const content = ((node.data.content as string) || title || '');
+        if (!content.trim() && !title.trim()) continue;
 
         const contentHash = hashContent(content);
 
-        // Skip if already in sheet
         if (existingHashes.has(contentHash)) continue;
 
-        await appendThoughtToSheet(googleAuth.spreadsheetId, content as string);
+        await appendThoughtToSheet(googleAuth.spreadsheetId, title, content);
         existingHashes.add(contentHash);
         exported++;
       }
