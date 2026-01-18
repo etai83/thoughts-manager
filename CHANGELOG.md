@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-18
+
+### Changed
+- **Premium UI Overhaul**: Fixed invisible React Flow controls and implemented vibrant, modern button designs across all panels.
+- **Enhanced UX**: Added smooth hover/active scaling effects and refined shadows for all interactive elements.
+- **Visual Clarity**: Improved accessibility of controls with better color contrast and border definitions.
+
 ## [1.1.0] - 2026-01-18
 
 ### Added
