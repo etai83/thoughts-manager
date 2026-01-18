@@ -173,13 +173,13 @@ const Sidebar: React.FC = () => {
         <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Actions</h2>
         <button
           onClick={handleAddNode}
-          className="w-full bg-blue-600 text-white px-4 py-2.5 rounded-xl hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md flex items-center gap-3 font-semibold text-sm"
+          className="w-full bg-blue-600 text-white px-4 py-3 rounded-2xl hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-blue-100 flex items-center gap-3 font-semibold text-sm"
         >
           <span className="text-xl">+</span> Add Thought
         </button>
         <button
           onClick={handleLayout}
-          className="w-full bg-stone-50 text-stone-700 px-4 py-2.5 rounded-xl hover:bg-stone-100 hover:scale-[1.02] active:scale-[0.98] transition-all border border-stone-200 flex items-center gap-3 font-semibold text-sm shadow-sm"
+          className="w-full bg-stone-50 text-stone-700 px-4 py-3 rounded-2xl hover:bg-stone-100 hover:scale-[1.02] active:scale-[0.98] transition-all border border-stone-200 flex items-center gap-3 font-semibold text-sm shadow-sm"
         >
           <span className="text-lg">⚙</span> Auto Layout
         </button>
@@ -204,7 +204,7 @@ const Sidebar: React.FC = () => {
           <button
             onClick={handleConnect}
             disabled={!googleAuth.isInitialized}
-            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            className="w-full bg-green-600 text-white px-4 py-2.5 rounded-xl hover:bg-green-700 hover:scale-[1.02] active:scale-[0.98] disabled:bg-gray-300 disabled:cursor-not-allowed transition-all text-sm font-semibold flex items-center justify-center gap-2 shadow-md shadow-green-100"
           >
             {googleAuth.isInitialized ? (
               <>🔗 Connect to Google</>
@@ -215,7 +215,7 @@ const Sidebar: React.FC = () => {
         ) : (
           <button
             onClick={handleDisconnect}
-            className="w-full bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+            className="w-full bg-red-50 text-red-600 px-4 py-2.5 rounded-xl hover:bg-red-100 transition-all text-sm font-semibold border border-red-100"
           >
             Disconnect
           </button>
@@ -246,14 +246,14 @@ const Sidebar: React.FC = () => {
           <button
             onClick={handleSyncFrom}
             disabled={!googleAuth.isConnected || !googleAuth.spreadsheetId || isSyncing}
-            className="px-3 py-2 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+            className="px-3 py-2.5 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl border border-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 font-semibold shadow-sm"
           >
             {isSyncing ? '...' : '↓'} From Sheet
           </button>
           <button
             onClick={handleSyncTo}
             disabled={!googleAuth.isConnected || !googleAuth.spreadsheetId || isSyncing}
-            className="px-3 py-2 text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg border border-purple-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+            className="px-3 py-2.5 text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl border border-purple-200 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 font-semibold shadow-sm"
           >
             {isSyncing ? '...' : '↑'} To Sheet
           </button>
@@ -301,8 +301,8 @@ const Sidebar: React.FC = () => {
               <label
                 key={tag}
                 className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${selectedTags.includes(tag)
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'hover:bg-gray-100 text-gray-700'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'hover:bg-gray-100 text-gray-700'
                   }`}
               >
                 <input
@@ -333,26 +333,26 @@ const Sidebar: React.FC = () => {
         <div className="grid grid-cols-1 gap-2">
           <button
             onClick={exportToJson}
-            className="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-between group"
+            className="w-full text-left px-3 py-2.5 text-xs bg-stone-50 hover:bg-stone-100 rounded-xl border border-stone-200 transition-all flex items-center justify-between group font-medium"
           >
             <span>Export JSON</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">↓</span>
           </button>
           <button
             onClick={exportToMarkdown}
-            className="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-between group"
+            className="w-full text-left px-3 py-2.5 text-xs bg-stone-50 hover:bg-stone-100 rounded-xl border border-stone-200 transition-all flex items-center justify-between group font-medium"
           >
             <span>Export Markdown</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">↓</span>
           </button>
-          <label className="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors cursor-pointer flex items-center justify-between group">
+          <label className="w-full text-left px-3 py-2.5 text-xs bg-stone-50 hover:bg-stone-100 rounded-xl border border-stone-200 transition-all cursor-pointer flex items-center justify-between group font-medium">
             <span>Import JSON</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">↑</span>
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
           <button
             onClick={handleDeleteAll}
-            className="w-full text-left px-3 py-2 text-xs bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-200 transition-colors flex items-center justify-between group mt-2"
+            className="w-full text-left px-3 py-2.5 text-xs bg-red-50 hover:bg-red-100 text-red-600 rounded-xl border border-red-100 transition-all flex items-center justify-between group mt-2 font-medium"
           >
             <span>Delete All Thoughts</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">🗑️</span>

@@ -50,7 +50,7 @@ const InsightsPanel: React.FC = () => {
               <div className="text-xs font-medium truncate flex-1 mr-2">{node.label}</div>
               <button
                 onClick={() => handleConnect(node.id)}
-                className="text-[10px] bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                className="text-[10px] bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 hover:scale-[1.05] active:scale-[0.95] transition-all font-bold shadow-sm shadow-blue-50"
               >
                 Connect
               </button>

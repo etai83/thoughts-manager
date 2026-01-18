@@ -26,9 +26,9 @@ const AIChat: React.FC = () => {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-purple-600 text-white px-6 py-2 rounded-full shadow-lg hover:bg-purple-700 transition-colors font-bold text-sm"
+          className="bg-purple-600 text-white px-8 py-3 rounded-2xl shadow-xl shadow-purple-100 hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all font-bold text-sm flex items-center gap-2"
         >
-          Ask your Graph
+          <span>✨</span> Ask your Graph
         </button>
       ) : (
         <div className="bg-white rounded-lg shadow-2xl border w-[500px] overflow-hidden flex flex-col">
@@ -36,7 +36,7 @@ const AIChat: React.FC = () => {
             Graph Assistant
             <button onClick={() => setIsOpen(false)} className="hover:text-gray-200">✕</button>
           </div>
-          
+
           <div className="p-4 flex flex-col gap-4 max-h-[400px] overflow-y-auto">
             {answer && (
               <div className="bg-gray-50 p-3 rounded border text-xs text-black prose prose-slate max-w-none">
@@ -62,7 +62,7 @@ const AIChat: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-purple-600 text-white px-4 py-2 rounded text-xs hover:bg-purple-700 transition-colors disabled:opacity-50"
+              className="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               Ask
             </button>

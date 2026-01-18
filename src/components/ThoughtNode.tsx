@@ -111,9 +111,9 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
               onMouseDown={(e) => e.preventDefault()} // Prevent blur before click
               onClick={handleSuggest}
               disabled={isSuggesting}
-              className="mt-2 text-[10px] bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700 transition-colors disabled:opacity-50"
+              className="mt-2 text-[10px] bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 font-bold shadow-sm shadow-purple-50"
             >
-              {isSuggesting ? 'Thinking...' : 'AI Suggestion'}
+              {isSuggesting ? 'Thinking...' : '✨ AI Suggestion'}
             </button>
 
             <div className="mt-3 pt-3 border-t border-gray-200">
@@ -147,7 +147,7 @@ const ThoughtNode = ({ id, data, selected }: NodeProps<Node<ThoughtNodeData>>) =
                 <button
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={handleAddTag}
-                  className="text-[10px] bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+                  className="text-[10px] bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all font-bold"
                 >
                   Add
                 </button>

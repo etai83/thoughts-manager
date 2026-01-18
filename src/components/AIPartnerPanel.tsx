@@ -44,33 +44,33 @@ const AIPartnerPanel: React.FC = () => {
     <div className="absolute top-4 right-4 z-[10] w-[300px] bg-white rounded-lg shadow-xl border p-4 text-black">
       <h3 className="font-bold text-sm border-b pb-2 mb-2 flex justify-between items-center">
         AI Partner
-        <button 
+        <button
           onClick={() => setResult(null)}
           className="text-xs text-gray-400 hover:text-gray-600"
         >
           ✕
         </button>
       </h3>
-      
+
       {!result && !isLoading && (
         <div className="flex flex-col gap-2">
           <p className="text-xs text-gray-600">
-            {selectedNodes.length === 2 
-              ? "You've selected two thoughts. Want to see how they might be connected?" 
+            {selectedNodes.length === 2
+              ? "You've selected two thoughts. Want to see how they might be connected?"
               : `You've selected ${selectedNodes.length} thoughts. Want to synthesize them into a summary?`}
           </p>
           <div className="flex gap-2">
             {selectedNodes.length === 2 && (
               <button
                 onClick={handleExplain}
-                className="flex-1 bg-purple-600 text-white px-3 py-2 rounded text-xs hover:bg-purple-700 transition-colors"
+                className="flex-1 bg-purple-600 text-white px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-purple-50"
               >
                 Explain Link
               </button>
             )}
             <button
               onClick={handleSummarize}
-              className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-xs hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-blue-600 text-white px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-blue-50"
             >
               Summarize
             </button>
