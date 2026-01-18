@@ -37,6 +37,10 @@ const Canvas: React.FC = () => {
     useStore.getState().toggleSelection(node.id, isMulti);
   };
 
+  const handlePaneClick = () => {
+    useStore.getState().clearSelection();
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }} data-testid="rf__wrapper">
       <SearchBar />
@@ -47,6 +51,7 @@ const Canvas: React.FC = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={handleNodeClick}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
         multiSelectionKeyCode={['Meta', 'Ctrl']}

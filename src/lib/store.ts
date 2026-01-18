@@ -32,6 +32,7 @@ export type AppState = {
   suggestExpansion: (id: string) => Promise<string>;
   chatWithGraph: (question: string) => Promise<string>;
   toggleSelection: (id: string, isMulti: boolean) => void;
+  clearSelection: () => void;
   clearData: () => Promise<void>;
 };
 
@@ -190,6 +191,11 @@ export const useStore = create<AppState>((set, get) => ({
         // For single-select, deselect all others. For multi-select, keep other selections.
         return isMulti ? node : { ...node, selected: false };
       }),
+    });
+  },
+  clearSelection: () => {
+    set({
+      nodes: get().nodes.map((node) => ({ ...node, selected: false })),
     });
   },
   clearData: async () => {
