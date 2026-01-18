@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-01-18
+
+### Added
+- **Google Sheets Sync**: Two-way synchronization with Google Sheets.
+    - Connect with Google OAuth.
+    - Import new thoughts from a spreadsheet.
+    - Export existing thoughts to a spreadsheet.
+    - Auto-link Google Assistant notes via Sheets.
+
 ## [1.0.0] - 2026-01-16
 
 ### Added

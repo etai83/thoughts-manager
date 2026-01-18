@@ -13,6 +13,24 @@ import { db } from './db';
 import { vectorStore } from './vectorStore';
 import { getEmbedding } from './ollama';
 import { explainConnection, summarizeNodes, expandThought, askGraph } from './aiServices';
+import {
+  initGoogleAuth,
+  signIn,
+  signOut,
+  isAuthenticated,
+  fetchThoughtsFromSheet,
+  appendThoughtToSheet,
+  markRowsAsSynced,
+  type SheetThought,
+} from './googleSheetsService';
+
+export interface GoogleAuthState {
+  isConnected: boolean;
+  isInitialized: boolean;
+  spreadsheetId: string | null;
+  lastSyncTime: string | null;
+  syncError: string | null;
+}
 
 export type AppState = {
   nodes: Node[];
@@ -40,12 +58,43 @@ export type AppState = {
   toggleSelection: (id: string, isMulti: boolean) => void;
   clearSelection: () => void;
   clearData: () => Promise<void>;
+  // Google Sheets Sync
+  googleAuth: GoogleAuthState;
+  initGoogleSheetsAuth: () => Promise<void>;
+  connectGoogleSheets: () => Promise<void>;
+  disconnectGoogleSheets: () => void;
+  setSpreadsheetId: (id: string) => void;
+  syncFromSheets: () => Promise<{ imported: number; total: number }>;
+  syncToSheets: () => Promise<{ exported: number }>;
+};
+
+// Helper to generate a simple hash for duplicate detection
+const hashContent = (content: string): string => {
+  let hash = 0;
+  for (let i = 0; i < content.length; i++) {
+    const char = content.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash.toString(36);
 };
 
 export const useStore = create<AppState>((set, get) => ({
   nodes: [],
   edges: [],
   selectedTags: [],
+  // Google Auth State
+  googleAuth: {
+    isConnected: false,
+    isInitialized: false,
+    spreadsheetId: typeof window !== 'undefined'
+      ? localStorage.getItem('thoughts-spreadsheet-id')
+      : null,
+    lastSyncTime: typeof window !== 'undefined'
+      ? localStorage.getItem('thoughts-last-sync')
+      : null,
+    syncError: null,
+  },
   onNodesChange: (changes) => {
     // Filter out selection changes - we handle selection manually via toggleSelection
     const nonSelectChanges = changes.filter((c) => c.type !== 'select');
@@ -246,5 +295,206 @@ export const useStore = create<AppState>((set, get) => ({
     await db.nodes.clear();
     await db.edges.clear();
     set({ nodes: [], edges: [], selectedTags: [] });
+  },
+
+  // Google Sheets Integration
+  initGoogleSheetsAuth: async () => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn('Google Client ID not configured');
+      return;
+    }
+    try {
+      await initGoogleAuth(clientId);
+      set({
+        googleAuth: {
+          ...get().googleAuth,
+          isInitialized: true,
+          isConnected: isAuthenticated(),
+        },
+      });
+    } catch (error) {
+      console.error('Failed to initialize Google Auth:', error);
+    }
+  },
+
+  connectGoogleSheets: async () => {
+    try {
+      set({
+        googleAuth: { ...get().googleAuth, syncError: null },
+      });
+      await signIn();
+      set({
+        googleAuth: {
+          ...get().googleAuth,
+          isConnected: true,
+        },
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to connect';
+      set({
+        googleAuth: { ...get().googleAuth, syncError: message },
+      });
+      throw error;
+    }
+  },
+
+  disconnectGoogleSheets: () => {
+    signOut();
+    set({
+      googleAuth: {
+        ...get().googleAuth,
+        isConnected: false,
+      },
+    });
+  },
+
+  setSpreadsheetId: (id: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('thoughts-spreadsheet-id', id);
+    }
+    set({
+      googleAuth: {
+        ...get().googleAuth,
+        spreadsheetId: id,
+      },
+    });
+  },
+
+  syncFromSheets: async () => {
+    const { googleAuth, nodes, addNode } = get();
+
+    if (!googleAuth.isConnected) {
+      throw new Error('Not connected to Google. Please sign in first.');
+    }
+    if (!googleAuth.spreadsheetId) {
+      throw new Error('Spreadsheet ID not set. Please configure it first.');
+    }
+
+    try {
+      set({ googleAuth: { ...googleAuth, syncError: null } });
+
+      const sheetThoughts = await fetchThoughtsFromSheet(googleAuth.spreadsheetId);
+      const unsyncedThoughts = sheetThoughts.filter(t => !t.synced && t.content.trim());
+
+      // Get existing content hashes for duplicate detection
+      const existingHashes = new Set(
+        nodes.map(n => hashContent(((n.data.label as string) || '') + ((n.data.content as string) || '')))
+      );
+
+      const rowsToMark: number[] = [];
+      let imported = 0;
+
+      for (const thought of unsyncedThoughts) {
+        const contentHash = hashContent(thought.content);
+
+        // Skip duplicates
+        if (existingHashes.has(contentHash)) {
+          rowsToMark.push(thought.rowIndex);
+          continue;
+        }
+
+        // Create new thought node
+        const id = Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9);
+        const newNode = {
+          id,
+          position: {
+            x: 200 + Math.random() * 300,
+            y: 200 + Math.random() * 300,
+          },
+          data: {
+            label: thought.content.slice(0, 50) + (thought.content.length > 50 ? '...' : ''),
+            content: thought.content,
+          },
+          type: 'thought',
+        };
+        addNode(newNode);
+        existingHashes.add(contentHash);
+        rowsToMark.push(thought.rowIndex);
+        imported++;
+      }
+
+      // Mark rows as synced in the sheet
+      if (rowsToMark.length > 0) {
+        await markRowsAsSynced(googleAuth.spreadsheetId, rowsToMark);
+      }
+
+      // Update last sync time
+      const now = new Date().toISOString();
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('thoughts-last-sync', now);
+      }
+      set({
+        googleAuth: {
+          ...get().googleAuth,
+          lastSyncTime: now,
+        },
+      });
+
+      return { imported, total: sheetThoughts.length };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Sync failed';
+      set({
+        googleAuth: { ...get().googleAuth, syncError: message },
+      });
+      throw error;
+    }
+  },
+
+  syncToSheets: async () => {
+    const { googleAuth, nodes } = get();
+
+    if (!googleAuth.isConnected) {
+      throw new Error('Not connected to Google. Please sign in first.');
+    }
+    if (!googleAuth.spreadsheetId) {
+      throw new Error('Spreadsheet ID not set. Please configure it first.');
+    }
+
+    try {
+      set({ googleAuth: { ...googleAuth, syncError: null } });
+
+      // Get existing thoughts from sheet
+      const sheetThoughts = await fetchThoughtsFromSheet(googleAuth.spreadsheetId);
+      const existingHashes = new Set(
+        sheetThoughts.map(t => hashContent(t.content))
+      );
+
+      let exported = 0;
+
+      for (const node of nodes) {
+        const content = ((node.data.content as string) || (node.data.label as string) || '');
+        if (!content.trim()) continue;
+
+        const contentHash = hashContent(content);
+
+        // Skip if already in sheet
+        if (existingHashes.has(contentHash)) continue;
+
+        await appendThoughtToSheet(googleAuth.spreadsheetId, content as string);
+        existingHashes.add(contentHash);
+        exported++;
+      }
+
+      // Update last sync time
+      const now = new Date().toISOString();
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('thoughts-last-sync', now);
+      }
+      set({
+        googleAuth: {
+          ...get().googleAuth,
+          lastSyncTime: now,
+        },
+      });
+
+      return { exported };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Sync failed';
+      set({
+        googleAuth: { ...get().googleAuth, syncError: message },
+      });
+      throw error;
+    }
   },
 }));
